@@ -106,10 +106,9 @@ export function makeGraphQLRequest() {
     graphqlRequest.params
   );
 
-  if (res.status !== 200) {
-    console.log(`‼️ Failed to run HTTP request:`, res);
-  }
-
+  // if (res.status !== 200) {
+  //   console.log(`‼️ Failed to run HTTP request:`, res);
+  // }
   check(res, {
     "response code was 200": (res) => res.status == 200,
     "no graphql errors": (resp) => {

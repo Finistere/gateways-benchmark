@@ -5,18 +5,26 @@ services:
     build:
       context: ${BASE_DIR:-.}/../../subgraphs/accounts
       dockerfile: ../Dockerfile.rust
+    cap_add:
+      - NET_ADMIN
   inventory:
     build:
       context: ${BASE_DIR:-.}/../../subgraphs/inventory
       dockerfile: ../Dockerfile.rust
+    cap_add:
+      - NET_ADMIN
   products:
     build:
       context: ${BASE_DIR:-.}/../../subgraphs/products
       dockerfile: ../Dockerfile.rust
+    cap_add:
+      - NET_ADMIN
   reviews:
     build:
       context: ${BASE_DIR:-.}/../../subgraphs/reviews
       dockerfile: ../Dockerfile.rust
+    cap_add:
+      - NET_ADMIN
 
 networks:
   test:

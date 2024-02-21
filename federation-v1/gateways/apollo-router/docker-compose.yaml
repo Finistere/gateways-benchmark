@@ -21,10 +21,12 @@ services:
         condition: service_healthy
     volumes:
       - type: bind
-        source: federation-v1/gateways/apollo-router/supergraph.graphql
+        source: ${BASE_DIR:-.}/../../gateways/apollo-router/supergraph.graphql
+        # source: federation-v1/gateways/apollo-router/supergraph.graphql
         target: /dist/schema/local.graphql
       - type: bind
-        source: federation-v1/gateways/apollo-router/config.yaml
+        source: ${BASE_DIR:-.}/../../gateways/apollo-router/config.yaml
+        # source: federation-v1/gateways/apollo-router/config.yaml
         target: /dist/config/router.yaml
     healthcheck:
         test: ["CMD", "/usr/lib/apt/apt-helper", "download-file", "http://127.0.0.1:8088/health?ready", "/tmp/health"]

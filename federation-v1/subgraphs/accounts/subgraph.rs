@@ -121,6 +121,7 @@ async fn delay_middleware<B>(req: Request<B>, next: Next<B>) -> Result<Response,
 async fn main() {
     let schema = Schema::build(Query, EmptyMutation, EmptySubscription)
         .enable_federation()
+        .extension(Logger)
         .finish();
     let sdl = schema.sdl_with_options(SDLExportOptions::new().federation().compose_directive());
     println!("GraphQL Federation SDL:\n{}", sdl);
@@ -138,4 +139,47 @@ async fn main() {
         .serve(app.into_make_service())
         .await
         .unwrap();
+}
+
+use std::{fmt::Write, sync::Arc};
+
+use async_graphql::{
+    extensions::{Extension, ExtensionContext, ExtensionFactory, NextExecute, NextParseQuery},
+    parser::types::{ExecutableDocument, OperationType, Selection},
+    PathSegment, Response, ServerResult, Variables,
+};
+
+/// Logger extension
+#[cfg_attr(docsrs, doc(cfg(feature = "log")))]
+pub struct Logger;
+
+impl ExtensionFactory for Logger {
+    fn create(&self) -> Arc<dyn Extension> {
+        Arc::new(LoggerExtension)
+    }
+}
+
+struct LoggerExtension;
+
+#[async_trait::async_trait]
+impl Extension for LoggerExtension {
+    async fn parse_query(
+        &self,
+        ctx: &ExtensionContext<'_>,
+        query: &str,
+        variables: &Variables,
+        next: NextParseQuery<'_>,
+    ) -> ServerResult<ExecutableDocument> {
+        println!("{query}");
+        next.run(ctx, query, variables).await
+    }
+
+    async fn execute(
+        &self,
+        ctx: &ExtensionContext<'_>,
+        operation_name: Option<&str>,
+        next: NextExecute<'_>,
+    ) -> Response {
+        next.run(ctx, operation_name).await
+    }
 }

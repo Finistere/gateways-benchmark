@@ -13,4 +13,7 @@ RUN cargo build --release
 FROM debian:12.2
 COPY --from=builder /usr/src/subgraph/target/release/subgraph /usr/local/bin/subgraph
 
+RUN apt-get update && \
+    apt-get install iproute2 -y
+
 CMD subgraph
