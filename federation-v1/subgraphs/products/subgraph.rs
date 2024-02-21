@@ -127,6 +127,7 @@ async fn delay_middleware<B>(req: Request<B>, next: Next<B>) -> Result<Response,
         tokio::time::sleep(tokio::time::Duration::from_millis(delay as u64)).await;
     }
 
+    tokio::time::sleep(tokio::time::Duration::from_millis(10)).await;
     Ok(next.run(req).await)
 }
 
@@ -134,9 +135,9 @@ async fn delay_middleware<B>(req: Request<B>, next: Next<B>) -> Result<Response,
 async fn main() {
     let schema = Schema::build(Query, EmptyMutation, EmptySubscription)
         .enable_federation()
+        // .extension(Logger)
         .finish();
     let sdl = schema.sdl_with_options(SDLExportOptions::new().federation().compose_directive());
-    println!("GraphQL Federation SDL:\n{}", sdl);
     let host = var("HOST").unwrap_or("0.0.0.0".to_owned());
     let port = var("PORT").unwrap_or("4001".to_owned());
     let path = "/graphql";
@@ -145,9 +146,51 @@ async fn main() {
         .route_layer(from_fn(delay_middleware))
         .route("/sdl", get(|| async move { response::Html(sdl.clone()) }));
 
-    println!("GraphiQL IDE: http://{}:{}{}", host, port, path);
     Server::bind(&format!("{}:{}", host, port).parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
 }
+
+use async_graphql::{
+    extensions::{Extension, ExtensionContext, ExtensionFactory, NextExecute, NextParseQuery},
+    parser::types::ExecutableDocument,
+    ServerResult, Variables,
+};
+
+/// Logger extension
+#[cfg_attr(docsrs, doc(cfg(feature = "log")))]
+pub struct Logger;
+
+impl ExtensionFactory for Logger {
+    fn create(&self) -> std::sync::Arc<dyn Extension> {
+        std::sync::Arc::new(LoggerExtension)
+    }
+}
+
+struct LoggerExtension;
+
+#[async_trait::async_trait]
+impl Extension for LoggerExtension {
+    async fn parse_query(
+        &self,
+        ctx: &ExtensionContext<'_>,
+        query: &str,
+        variables: &Variables,
+        next: NextParseQuery<'_>,
+    ) -> ServerResult<ExecutableDocument> {
+        println!("--- PRODUCTS at {} ---", chrono::Utc::now());
+        println!("{query}");
+        next.run(ctx, query, variables).await
+    }
+
+    async fn execute(
+        &self,
+        ctx: &ExtensionContext<'_>,
+        operation_name: Option<&str>,
+        next: NextExecute<'_>,
+    ) -> async_graphql::Response {
+        next.run(ctx, operation_name).await
+    }
+}
+

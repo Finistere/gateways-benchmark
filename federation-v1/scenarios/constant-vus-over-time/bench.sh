@@ -23,7 +23,7 @@ export BENCH_MAX_VUS=60
 #     BENCH_VUST_LIST="100" ./run.sh "$gateway"
 # done
 
-for gateway in "mesh-supergraph-bun"; do
+for gateway in "grafbase" "apollo-router" "cosmo" "mesh-supergraph-bun"; do
     docker stop -t 1 $(docker ps -a -q)
     echo "Running $gateway"
     BENCH_VUS_LIST="100" ./run.sh "$gateway"

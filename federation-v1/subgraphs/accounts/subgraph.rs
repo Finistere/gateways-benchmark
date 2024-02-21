@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use async_graphql::{
     http::GraphiQLSource, EmptyMutation, EmptySubscription, Object, SDLExportOptions, Schema,
     SimpleObject, ID,
@@ -114,6 +116,7 @@ async fn delay_middleware<B>(req: Request<B>, next: Next<B>) -> Result<Response,
         tokio::time::sleep(tokio::time::Duration::from_millis(delay as u64)).await;
     }
 
+    tokio::time::sleep(tokio::time::Duration::from_millis(10)).await;
     Ok(next.run(req).await)
 }
 
@@ -121,10 +124,9 @@ async fn delay_middleware<B>(req: Request<B>, next: Next<B>) -> Result<Response,
 async fn main() {
     let schema = Schema::build(Query, EmptyMutation, EmptySubscription)
         .enable_federation()
-        .extension(Logger)
+        // .extension(Logger)
         .finish();
     let sdl = schema.sdl_with_options(SDLExportOptions::new().federation().compose_directive());
-    println!("GraphQL Federation SDL:\n{}", sdl);
     let host = var("HOST").unwrap_or("0.0.0.0".to_owned());
     let port = var("PORT").unwrap_or("4001".to_owned());
     let path = "/graphql";
@@ -134,19 +136,16 @@ async fn main() {
         .route_layer(middleware::from_fn(delay_middleware))
         .route("/sdl", get(|| async move { response::Html(sdl.clone()) }));
 
-    println!("GraphiQL IDE: http://{}:{}{}", host, port, path);
     Server::bind(&format!("{}:{}", host, port).parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
 }
 
-use std::{fmt::Write, sync::Arc};
-
 use async_graphql::{
     extensions::{Extension, ExtensionContext, ExtensionFactory, NextExecute, NextParseQuery},
-    parser::types::{ExecutableDocument, OperationType, Selection},
-    PathSegment, Response, ServerResult, Variables,
+    parser::types::ExecutableDocument,
+    ServerResult, Variables,
 };
 
 /// Logger extension
@@ -154,8 +153,8 @@ use async_graphql::{
 pub struct Logger;
 
 impl ExtensionFactory for Logger {
-    fn create(&self) -> Arc<dyn Extension> {
-        Arc::new(LoggerExtension)
+    fn create(&self) -> std::sync::Arc<dyn Extension> {
+        std::sync::Arc::new(LoggerExtension)
     }
 }
 
@@ -170,6 +169,7 @@ impl Extension for LoggerExtension {
         variables: &Variables,
         next: NextParseQuery<'_>,
     ) -> ServerResult<ExecutableDocument> {
+        println!("--- ACCOUNTS at {} ---", chrono::Utc::now());
         println!("{query}");
         next.run(ctx, query, variables).await
     }
@@ -179,7 +179,7 @@ impl Extension for LoggerExtension {
         ctx: &ExtensionContext<'_>,
         operation_name: Option<&str>,
         next: NextExecute<'_>,
-    ) -> Response {
+    ) -> async_graphql::Response {
         next.run(ctx, operation_name).await
     }
 }
