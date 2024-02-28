@@ -1,4 +1,4 @@
-FROM ghcr.io/grafbase/grafbase:0.56.0
+FROM grafbase-latest-uring
 
 COPY package.json package-lock.json grafbase.config.ts supergraph.graphql ./
 

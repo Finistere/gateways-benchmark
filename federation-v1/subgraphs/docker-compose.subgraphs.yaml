@@ -4,8 +4,7 @@ services:
   accounts:
     image: '${DOCKER_REGISTRY}subgraph-accounts${DOCKER_TAG}'
     container_name: accounts
-    networks:
-      - test
+    network_mode: "host"
     ports:
       - "0.0.0.0:4001:4001"
     environment:
@@ -19,8 +18,7 @@ services:
   inventory:
     image: '${DOCKER_REGISTRY}subgraph-inventory${DOCKER_TAG}'
     container_name: inventory
-    networks:
-      - test
+    network_mode: "host"
     ports:
       - 4002:4002
     environment:
@@ -34,8 +32,7 @@ services:
   products:
     image: '${DOCKER_REGISTRY}subgraph-products${DOCKER_TAG}'
     container_name: products
-    networks:
-      - test
+    network_mode: "host"
     ports:
       - "0.0.0.0:4003:4003"
     environment:
@@ -49,8 +46,7 @@ services:
   reviews:
     image: '${DOCKER_REGISTRY}subgraph-reviews${DOCKER_TAG}'
     container_name: reviews
-    networks:
-      - test
+    network_mode: "host"
     ports:
       - 4004:4004
     environment:
@@ -62,6 +58,6 @@ services:
         timeout: 5s
         retries: 10
         
-networks:
-  test:
-    name: test
+# networks:
+#   test:
+#     name: test

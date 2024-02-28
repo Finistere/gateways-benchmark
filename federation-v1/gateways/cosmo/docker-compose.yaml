@@ -4,8 +4,7 @@ services:
   gateway:
     image: gateway/cosmo
     container_name: gateway
-    networks:
-      - test
+    network_mode: "host"
     ports:
       - "0.0.0.0:4000:4000"
     build:
@@ -31,6 +30,3 @@ services:
         limits:
           cpus: ${CPU_LIMIT:-1}
           memory: ${MEM_LIMIT:-1gb}
-networks:
-  test:
-    name: test

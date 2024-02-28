@@ -26,16 +26,20 @@ export COMPOSE_FLAGS="-f ../../subgraphs/docker-compose.subgraphs.yaml $LOCAL_EN
 # }
 # trap 'on_error' ERR
 
+docker stop -t 1 $(docker ps -a -q) | true
+
 docker compose $COMPOSE_FLAGS up -d --wait --force-recreate --build
+
+# sleep 10000
 
 # for subgraph in "products" "accounts" "inventory" "reviews"; do
 #     docker compose $COMPOSE_FLAGS exec "$subgraph" tc qdisc add dev eth0 root netem delay 100ms
 # done
 
 
-if [[ -z "${CI}" ]]; then
-    trap "docker compose $COMPOSE_FLAGS down && exit 0" INT
-fi
+# if [[ -z "${CI}" ]]; then
+#     trap "docker compose $COMPOSE_FLAGS down && exit 0" INT
+# fi
 
 # export K6_PROMETHEUS_RW_SERVER_URL=http://localhost:9090/api/v1/write
 # export K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true
@@ -44,15 +48,15 @@ export START_TIME="$(date +%s)"
 for vus in $BENCH_VUS_LIST; do
     export BENCH_VUS=$vus
 
-    OUT="1core-delay-results/$1_$BENCH_VUS"
+    OUT="$BENCH_RESULTS_OUTPUT_DIR/$1_$BENCH_VUS"
     mkdir -p "$OUT"
 
     k6 run warmup.k6.js
 
     # curl -X POST -H "Content-Type: application/json" --data @query.json http://localhost:4000/graphql -o /dev/null
-    # bash -c "timeout 60 docker stats --format '{{ json . }}' 'gateway' | sed 's/\x1b\[[0-9;]*[a-zA-Z]//g' ; echo" > "$OUT/stats.json" &
-    #
-    # k6 --summary-trend-stats="avg,min,med,p(95),p(99),p(99.9),p(99.99),max" --out json=$OUT_DIR/k6_metrics.json run -e SUMMARY_PATH="$OUT" benchmark.k6.js
+    bash -c "timeout 60 docker stats --format '{{ json . }}' 'gateway' | sed 's/\x1b\[[0-9;]*[a-zA-Z]//g' ; echo" > "$OUT/stats.json" &
+    k6 --summary-trend-stats="avg,min,med,p(95),p(99),p(99.9),p(99.99),max" --out json=$OUT_DIR/k6_metrics.json run -e SUMMARY_PATH="$OUT" benchmark.k6.js
+
     sleep 3
 done
 #

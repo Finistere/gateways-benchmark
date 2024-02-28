@@ -99,6 +99,18 @@ export function handleBenchmarkSummary(data, additionalContext = {}) {
   return out;
 }
 
+export function uncheckedGraphQLRequest() {
+  const res = http.post(
+    __ENV.GATEWAY_ENDPOINT || "http://localhost:4000/graphql",
+    graphqlRequest.payload,
+    graphqlRequest.params
+  );
+
+  check(res, {
+    "response code was 200": (res) => res.status == 200,
+  })
+}
+
 export function makeGraphQLRequest() {
   const res = http.post(
     __ENV.GATEWAY_ENDPOINT || "http://localhost:4000/graphql",

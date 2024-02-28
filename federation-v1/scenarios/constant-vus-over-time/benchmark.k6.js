@@ -1,4 +1,4 @@
-import { makeGraphQLRequest, handleBenchmarkSummary } from '../k6.shared.js'
+import { uncheckedGraphQLRequest, handleBenchmarkSummary } from '../k6.shared.js'
 
 const vus = __ENV.BENCH_VUS ? parseInt(__ENV.BENCH_VUS) : 100;
 const max_vus = __ENV.BENCH_MAX_VUS ? parseInt(__ENV.BENCH_MAX_VUS) : 20;
@@ -18,7 +18,7 @@ export const options = {
 };
 
 export default function() {
-  makeGraphQLRequest()
+  uncheckedGraphQLRequest()
 }
 
 export function handleSummary(data) {

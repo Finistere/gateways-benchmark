@@ -7,8 +7,7 @@ services:
     build:
       context: ${BASE_DIR:-.}/../../gateways/grafbase
       dockerfile: ./Dockerfile
-    networks:
-      - test
+    network_mode: "host"
     ports:
       - "0.0.0.0:4000:4000"
     depends_on:
@@ -30,6 +29,3 @@ services:
         limits:
           cpus: ${CPU_LIMIT:-1}
           memory: ${MEM_LIMIT:-1gb}
-networks:
-  test:
-    name: test

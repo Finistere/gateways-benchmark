@@ -14,7 +14,7 @@
         "overrideFieldPathFromAlias": true,
         "customGraphql": {
           "fetch": {
-            "url": { "staticVariableContent": "http://accounts:4001/graphql" },
+            "url": { "staticVariableContent": "http://localhost:4001/graphql" },
             "method": "POST",
             "body": {},
             "baseUrl": {},
@@ -22,7 +22,7 @@
           },
           "subscription": {
             "enabled": true,
-            "url": { "staticVariableContent": "http://accounts:4001/graphql" }
+            "url": { "staticVariableContent": "http://localhost:4001/graphql" }
           },
           "federation": {
             "enabled": true,
@@ -33,7 +33,7 @@
           }
         },
         "requestTimeoutSeconds": "10",
-        "id": "http://accounts:4001/graphql",
+        "id": "http://localhost:4001/graphql",
         "keys": [{ "typeName": "User", "selectionSet": "id" }]
       },
       {
@@ -47,7 +47,7 @@
         "overrideFieldPathFromAlias": true,
         "customGraphql": {
           "fetch": {
-            "url": { "staticVariableContent": "http://inventory:4002/graphql" },
+            "url": { "staticVariableContent": "http://localhost:4002/graphql" },
             "method": "POST",
             "body": {},
             "baseUrl": {},
@@ -55,7 +55,7 @@
           },
           "subscription": {
             "enabled": true,
-            "url": { "staticVariableContent": "http://inventory:4002/graphql" }
+            "url": { "staticVariableContent": "http://localhost:4002/graphql" }
           },
           "federation": {
             "enabled": true,
@@ -66,7 +66,7 @@
           }
         },
         "requestTimeoutSeconds": "10",
-        "id": "http://inventory:4002/graphql",
+        "id": "http://localhost:4002/graphql",
         "keys": [{ "typeName": "Product", "selectionSet": "upc" }],
         "requires": [
           {
@@ -88,7 +88,7 @@
         "overrideFieldPathFromAlias": true,
         "customGraphql": {
           "fetch": {
-            "url": { "staticVariableContent": "http://products:4003/graphql" },
+            "url": { "staticVariableContent": "http://localhost:4003/graphql" },
             "method": "POST",
             "body": {},
             "baseUrl": {},
@@ -96,7 +96,7 @@
           },
           "subscription": {
             "enabled": true,
-            "url": { "staticVariableContent": "http://products:4003/graphql" }
+            "url": { "staticVariableContent": "http://localhost:4003/graphql" }
           },
           "federation": {
             "enabled": true,
@@ -107,7 +107,7 @@
           }
         },
         "requestTimeoutSeconds": "10",
-        "id": "http://products:4003/graphql",
+        "id": "http://localhost:4003/graphql",
         "keys": [{ "typeName": "Product", "selectionSet": "upc" }]
       },
       {
@@ -123,7 +123,7 @@
         "overrideFieldPathFromAlias": true,
         "customGraphql": {
           "fetch": {
-            "url": { "staticVariableContent": "http://reviews:4004/graphql" },
+            "url": { "staticVariableContent": "http://localhost:4004/graphql" },
             "method": "POST",
             "body": {},
             "baseUrl": {},
@@ -131,7 +131,7 @@
           },
           "subscription": {
             "enabled": true,
-            "url": { "staticVariableContent": "http://reviews:4004/graphql" }
+            "url": { "staticVariableContent": "http://localhost:4004/graphql" }
           },
           "federation": {
             "enabled": true,
@@ -142,7 +142,7 @@
           }
         },
         "requestTimeoutSeconds": "10",
-        "id": "http://reviews:4004/graphql",
+        "id": "http://localhost:4004/graphql",
         "keys": [
           { "typeName": "Product", "selectionSet": "upc" },
           { "typeName": "User", "selectionSet": "id" },
@@ -185,22 +185,22 @@
     {
       "id": "0",
       "name": "accounts",
-      "routingUrl": "http://accounts:4001/graphql"
+      "routingUrl": "http://localhost:4001/graphql"
     },
     {
       "id": "1",
       "name": "inventory",
-      "routingUrl": "http://inventory:4002/graphql"
+      "routingUrl": "http://localhost:4002/graphql"
     },
     {
       "id": "2",
       "name": "products",
-      "routingUrl": "http://products:4003/graphql"
+      "routingUrl": "http://localhost:4003/graphql"
     },
     {
       "id": "3",
       "name": "reviews",
-      "routingUrl": "http://reviews:4004/graphql"
+      "routingUrl": "http://localhost:4004/graphql"
     }
   ]
 }

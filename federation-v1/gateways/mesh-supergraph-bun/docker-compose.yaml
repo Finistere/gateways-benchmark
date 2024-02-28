@@ -4,10 +4,9 @@ services:
   gateway:
     image: gateway/mesh-supergraph-bun
     container_name: gateway
-    networks:
-      - test
-    ports:
-      - 4000:4000
+    network_mode: "host"
+    # ports:
+    #   - 4000:4000
     environment:
       PORT: 4000
     build:
@@ -32,6 +31,3 @@ services:
         limits:
           cpus: ${CPU_LIMIT:-1}
           memory: ${MEM_LIMIT:-1gb}
-networks:
-  test:
-    name: test

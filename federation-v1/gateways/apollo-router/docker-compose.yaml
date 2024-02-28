@@ -4,8 +4,7 @@ services:
   gateway:
     image: ghcr.io/apollographql/router:v1.38.0
     container_name: gateway
-    networks:
-      - test
+    network_mode: "host"
     ports:
       - "0.0.0.0:4000:4000"
     environment:
@@ -39,6 +38,3 @@ services:
         limits:
           cpus: ${CPU_LIMIT:-1}
           memory: ${MEM_LIMIT:-1gb}
-networks:
-  test:
-    name: test
